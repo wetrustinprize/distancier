@@ -1,35 +1,9 @@
 import React, { useContext } from "react";
-import { Mark } from "@interfaces/Mark";
 import { MarkersContext } from "@contexts/MarkersContext";
 import AddMarkModal from "@components/AddMarkModal";
+import MarkItem from "@components/MarkItem";
 
-interface IMarkItem {
-  marker: Mark;
-  index: number;
-}
-
-const MarkItem: React.FC<IMarkItem> = ({ index, marker }: IMarkItem) => {
-  const { removeMarker } = useContext(MarkersContext);
-
-  return (
-    <div>
-      <h1>{marker.title}</h1>
-      <div>
-        <span>{marker.position.lat}</span>
-        <span>{marker.position.lng}</span>
-      </div>
-      <div>
-        <span>{marker.type}</span>
-      </div>
-      <div>
-        {marker.tags.map((tag, index) => (
-          <span key={index}>{tag}</span>
-        ))}
-      </div>
-      <button onClick={() => removeMarker(index)}>x</button>
-    </div>
-  );
-};
+import styles from "./styles.module.scss";
 
 const Markers: React.FC = () => {
   const { markers } = useContext(MarkersContext);
@@ -37,10 +11,10 @@ const Markers: React.FC = () => {
   const openAddMarkModalRef = React.useRef<() => void>(() => {});
 
   return (
-    <div>
+    <div className={styles.container}>
       <AddMarkModal openModalRef={openAddMarkModalRef} />
       <button onClick={() => openAddMarkModalRef.current()}>Add mark</button>
-      <div>
+      <div className={styles.markers}>
         {markers.map((marker, index) => (
           <MarkItem key={index} index={index} marker={marker} />
         ))}
