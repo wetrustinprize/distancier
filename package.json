@@ -11,6 +11,7 @@
   "dependencies": {
     "@googlemaps/react-wrapper": "^1.1.29",
     "@types/react-modal": "^3.13.1",
+    "framer-motion": "^6.2.8",
     "next": "12.1.2",
     "react": "18.0.0",
     "react-dom": "18.0.0",
