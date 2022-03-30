@@ -31,6 +31,7 @@ const MapMarker: React.FC<IMapMarkerProps> = ({
         position: mark.position,
         map: map,
         title: mark.title,
+        icon: mark.type === "house" ? "/house.png" : "/pin.png",
       });
     }
   }, [marker, mark, map]);
