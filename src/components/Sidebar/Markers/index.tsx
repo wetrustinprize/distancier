@@ -24,20 +24,9 @@ const Markers: React.FC = () => {
         Add Marker
       </button>
       <div className={styles.markers}>
-        <AnimatePresence>
-          {markers.map((marker, index) => (
-            <motion.div
-              animate={{ opacity: [0, 1], y: [5, 0] }}
-              exit={{ opacity: 0, y: 5 }}
-              transition={{
-                duration: 0.15,
-              }}
-              key={index}
-            >
-              <MarkItem index={index} marker={marker} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
+        {markers.map((marker, index) => (
+          <MarkItem key={index} index={index} marker={marker} />
+        ))}
       </div>
     </div>
   );
