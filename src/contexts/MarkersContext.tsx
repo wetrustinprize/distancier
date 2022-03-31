@@ -1,5 +1,5 @@
 import { Mark } from "@interfaces/Mark";
-import React, { createContext } from "react";
+import React, { createContext, useEffect } from "react";
 
 const defaultValues: {
   markers: Mark[];
@@ -22,32 +22,54 @@ const MarkersProvider: React.FC = ({ children }) => {
 
   const [selectedMarker, setSelectedMarker] = React.useState<Mark | null>(null);
 
-  const selectMarker = (marker: Mark) => {
-    // Check if marker is a house
-    if (marker.type !== "house") return;
+  useEffect(() => {
+    if (localStorage.getItem("markers"))
+      setMarkers(JSON.parse(localStorage.getItem("markers") as string));
 
-    // Check if marker exists in array, if not, add it
-    if (markers.findIndex((m) => m === marker) === -1) {
-      addMarker(marker);
+    if (localStorage.getItem("selectedMarker"))
+      setSelectedMarker(
+        JSON.parse(localStorage.getItem("selectedMarker") as string)
+      );
+  }, []);
+
+  const selectMarker = (marker: Mark | null) => {
+    // Check if marker is null
+    if (marker === null) {
+      setSelectedMarker(null);
+      localStorage.removeItem("selectedMarker");
+    } else {
+      // Check if marker is a house
+      if (marker.type !== "house") return;
+
+      // Check if marker exists in array, if not, add it
+      if (markers.findIndex((m) => m === marker) === -1) {
+        addMarker(marker);
+      }
+
+      // Set the selected marker
+      setSelectedMarker(marker);
+      localStorage.setItem("selectedMarker", JSON.stringify(marker));
     }
-
-    // Set the selected marker
-    setSelectedMarker(marker);
   };
 
   const addMarker = (marker: Mark) => {
     // Adds new marker to the array
-    setMarkers([...markers, marker]);
+    const newMarkers = [...markers, marker];
+
+    setMarkers(newMarkers);
+    localStorage.setItem("markers", JSON.stringify(newMarkers));
   };
 
   const removeMarker = (index: number) => {
     // Remove selected marker
-    if (selectedMarker && index === markers.indexOf(selectedMarker)) {
-      setSelectedMarker(null);
-    }
+    if (selectedMarker && index === markers.indexOf(selectedMarker))
+      selectMarker(null);
 
     // Remove marker from array
-    setMarkers(markers.filter((marker, i) => i !== index));
+    const newMarkers = markers.filter((marker, i) => i !== index);
+
+    setMarkers(newMarkers);
+    localStorage.setItem("markers", JSON.stringify(newMarkers));
   };
 
   return (
