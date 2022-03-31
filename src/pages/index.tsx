@@ -3,10 +3,9 @@ import MapMarker from "@components/MapMarker";
 import MapMarkerDistances from "@components/MapMarkerDistances";
 import Sidebar from "@components/Sidebar";
 import { MarkersContext } from "@contexts/MarkersContext";
-import { Wrapper } from "@googlemaps/react-wrapper";
-import { ENVIRONMENT } from "@utils/environment";
 import type { NextPage } from "next";
 import { useContext } from "react";
+import { toast } from "react-toastify";
 
 import styled from "./styles.module.scss";
 
@@ -18,24 +17,25 @@ const Home: NextPage = () => {
     if (!e.latLng) return;
 
     navigator.clipboard.writeText(`${e.latLng.lat()},${e.latLng.lng()}`);
+    toast("Coordinates copied to clipboard!", {
+      type: "info",
+    });
   };
 
   return (
-    <Wrapper apiKey={ENVIRONMENT.googleMapsApiKey}>
-      <div className={styled.container}>
-        <Map onClick={copyLatLng}>
-          <MapMarkerDistances />
-          {markers.map((marker, index) => (
-            <MapMarker
-              onClick={() => selectMarker(marker)}
-              key={index}
-              mark={marker}
-            />
-          ))}
-        </Map>
-        <Sidebar />
-      </div>
-    </Wrapper>
+    <div className={styled.container}>
+      <Map onClick={copyLatLng}>
+        <MapMarkerDistances />
+        {markers.map((marker, index) => (
+          <MapMarker
+            onClick={() => selectMarker(marker)}
+            key={index}
+            mark={marker}
+          />
+        ))}
+      </Map>
+      <Sidebar />
+    </div>
   );
 };
 

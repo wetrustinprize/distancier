@@ -6,6 +6,7 @@ import { BsFillHouseFill, BsPinFill, BsFillTrashFill } from "react-icons/bs";
 import { AiFillTag } from "react-icons/ai";
 
 import styles from "./styles.module.scss";
+import { toast } from "react-toastify";
 
 interface IMarkItem {
   marker: Mark;
@@ -19,6 +20,17 @@ const MarkItem: React.FC<IMarkItem> = ({ index, marker }: IMarkItem) => {
     const latLngString = `${marker.position.lat}, ${marker.position.lng}`;
 
     navigator.clipboard.writeText(latLngString);
+    toast("Coordinates copied to clipboard!", {
+      type: "info",
+    });
+  };
+
+  const handleDeleteMarker = () => {
+    removeMarker(index);
+
+    toast("Marker deleted!", {
+      type: "success",
+    });
   };
 
   return (
@@ -30,7 +42,7 @@ const MarkItem: React.FC<IMarkItem> = ({ index, marker }: IMarkItem) => {
         </h1>
         <div>
           <span>{marker.type}</span>
-          <button onClick={() => removeMarker(index)}>
+          <button onClick={() => handleDeleteMarker()}>
             <BsFillTrashFill />
           </button>
         </div>

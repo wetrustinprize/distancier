@@ -12,6 +12,8 @@ body {
 }
 
 :root {
+  --toastify-color-success: #2A9D8F;
+
   --primary-color: #2A9D8F;
   --primary-color-dark: #264653;
   --secondary-color: #6c757d;
