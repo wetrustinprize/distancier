@@ -37,7 +37,9 @@ const Sidebar: React.FC = () => {
           </button>
         ))}
       </div>
-      <div>{Headers.find((h) => h.title === selectedHeader)?.component}</div>
+      <div className={styles.content}>
+        {Headers.find((h) => h.title === selectedHeader)?.component}
+      </div>
     </div>
   );
 };
