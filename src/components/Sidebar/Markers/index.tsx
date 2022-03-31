@@ -4,6 +4,9 @@ import AddMarkModal from "@components/AddMarkModal";
 import MarkItem from "@components/MarkItem";
 
 import styles from "./styles.module.scss";
+import { AnimatePresence, motion } from "framer-motion";
+
+import { RiAddFill } from "react-icons/ri";
 
 const Markers: React.FC = () => {
   const { markers } = useContext(MarkersContext);
@@ -13,11 +16,28 @@ const Markers: React.FC = () => {
   return (
     <div className={styles.container}>
       <AddMarkModal openModalRef={openAddMarkModalRef} />
-      <button onClick={() => openAddMarkModalRef.current()}>Add mark</button>
+      <button
+        className={styles.newMarker}
+        onClick={() => openAddMarkModalRef.current()}
+      >
+        <RiAddFill />
+        Add Marker
+      </button>
       <div className={styles.markers}>
-        {markers.map((marker, index) => (
-          <MarkItem key={index} index={index} marker={marker} />
-        ))}
+        <AnimatePresence>
+          {markers.map((marker, index) => (
+            <motion.div
+              animate={{ opacity: [0, 1], y: [5, 0] }}
+              exit={{ opacity: 0, y: 5 }}
+              transition={{
+                duration: 0.15,
+              }}
+              key={index}
+            >
+              <MarkItem index={index} marker={marker} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
     </div>
   );
