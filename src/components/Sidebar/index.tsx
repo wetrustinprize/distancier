@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Details from "./Details";
 import Markers from "./Markers";
 
 import styles from "./styles.module.scss";
@@ -15,7 +16,7 @@ const Headers: ISidebarHeader[] = [
   },
   {
     title: "Details",
-    component: <div>Details</div>,
+    component: <Details />,
   },
 ];
 
