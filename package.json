@@ -16,8 +16,10 @@
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-icons": "^4.3.1",
+    "react-minimal-pie-chart": "^8.2.0",
     "react-modal": "^3.14.4",
-    "sass": "^1.49.9"
+    "sass": "^1.49.9",
+    "seed-color": "^2.0.1"
   },
   "devDependencies": {
     "@types/google.maps": "^3.48.3",

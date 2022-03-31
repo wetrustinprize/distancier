@@ -18,30 +18,14 @@ const defaultValues: {
 export const MarkersContext = createContext(defaultValues);
 
 const MarkersProvider: React.FC = ({ children }) => {
-  const [markers, setMarkers] = React.useState<Mark[]>([
-    {
-      title: "Peter's House",
-      position: {
-        lat: -25.394801169945584,
-        lng: -49.33209958875103,
-      },
-      tags: ["house", "peter"],
-      type: "house",
-    },
-    {
-      title: "Center of the World",
-      position: {
-        lat: 0,
-        lng: 0,
-      },
-      tags: ["center", "world"],
-      type: "place",
-    },
-  ]);
+  const [markers, setMarkers] = React.useState<Mark[]>([]);
 
   const [selectedMarker, setSelectedMarker] = React.useState<Mark | null>(null);
 
   const selectMarker = (marker: Mark) => {
+    // Check if marker is a house
+    if (marker.type !== "house") return;
+
     // Check if marker exists in array, if not, add it
     if (markers.findIndex((m) => m === marker) === -1) {
       addMarker(marker);
