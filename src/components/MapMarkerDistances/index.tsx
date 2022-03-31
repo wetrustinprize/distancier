@@ -32,6 +32,10 @@ const MapMarkerDistances: React.FC<IMapMarkerProps> = ({
 
       if (selectedMarker)
         markers.forEach((marker) => {
+          // Check if marker is not a house
+          if (marker.type === "house") return;
+
+          // Create coordinates
           coordinates.push(
             {
               lat: selectedMarker.position.lat,
