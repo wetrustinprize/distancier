@@ -23,13 +23,24 @@ const MarkersProvider: React.FC = ({ children }) => {
   const [selectedMarker, setSelectedMarker] = React.useState<Mark | null>(null);
 
   useEffect(() => {
+    let localMarkers: Mark[] = [];
+    let localSelectedMarker: Mark | null = null;
+
     if (localStorage.getItem("markers"))
-      setMarkers(JSON.parse(localStorage.getItem("markers") as string));
+      localMarkers = JSON.parse(localStorage.getItem("markers") as string);
 
     if (localStorage.getItem("selectedMarker"))
-      setSelectedMarker(
-        JSON.parse(localStorage.getItem("selectedMarker") as string)
+      localSelectedMarker = JSON.parse(
+        localStorage.getItem("selectedMarker") as string
       );
+
+    if (localMarkers) {
+      setMarkers(localMarkers);
+
+      if (localSelectedMarker && localMarkers.includes(localSelectedMarker))
+        setSelectedMarker(localSelectedMarker);
+      else localStorage.removeItem("selectedMarker");
+    }
   }, []);
 
   const selectMarker = (marker: Mark | null) => {
@@ -42,7 +53,7 @@ const MarkersProvider: React.FC = ({ children }) => {
       if (marker.type !== "house") return;
 
       // Check if marker exists in array, if not, add it
-      if (markers.findIndex((m) => m === marker) === -1) {
+      if (!markers.includes(marker)) {
         addMarker(marker);
       }
 
