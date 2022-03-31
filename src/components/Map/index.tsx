@@ -3,7 +3,12 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 
 import styles from "./styles.module.scss";
 
-const Map: React.FC = ({ children }) => {
+interface IMap {
+  onClick?: (e: google.maps.MapMouseEvent) => void;
+  onIdle?: (e: google.maps.Map) => void;
+}
+
+const Map: React.FC<IMap> = ({ children, onClick, onIdle }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map>();
 
@@ -20,6 +25,14 @@ const Map: React.FC = ({ children }) => {
       setMap(newMap);
     }
   }, [ref, map]);
+
+  // Add event listeners
+  useEffect(() => {
+    if (map) {
+      if (onClick) map.addListener("click", onClick);
+      if (onIdle) map.addListener("idle", onIdle);
+    }
+  }, [map, onClick, onIdle]);
 
   return (
     <>
