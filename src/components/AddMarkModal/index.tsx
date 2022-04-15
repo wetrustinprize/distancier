@@ -1,31 +1,109 @@
+import Map from "@components/Map";
+import MapMarker from "@components/MapMarker";
 import { MarkersContext } from "@contexts/MarkersContext";
+import { getCoordinatesByAddress } from "@services/Geocode";
 import { motion } from "framer-motion";
-import React, { useContext, useEffect, useState } from "react";
+import { debounce } from "lodash";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import ReactModal from "react-modal";
 
 import styles from "./styles.module.scss";
 
 interface IAddMarkModal {
+  /**
+   * Reference callback to open the modal.
+   */
   openModalRef: React.MutableRefObject<() => void>;
 }
 
+/**
+ * Modal for creating a new modal.
+ *
+ * @component
+ */
 const AddMarkModal: React.FC<IAddMarkModal> = ({
   openModalRef,
 }: IAddMarkModal) => {
   const [isOpen, setIsOpen] = useState(false);
+  openModalRef.current = () => setIsOpen(true);
+
   const { addMarker } = useContext(MarkersContext);
 
   const [lat, setLat] = useState<number>(0);
   const [lng, setLng] = useState<number>(0);
 
   const [latLngString, setLatLngString] = useState<string>("0,0");
+  const [addressString, setAddressString] = useState<string>("");
 
+  const panToRef = useRef<(latLng: google.maps.LatLngLiteral) => void>(
+    () => {}
+  );
+
+  // Fetches the address with a debounce
+  const fetchAddress = useRef(
+    debounce(async (address: string) => {
+      // TODO: Wait for Google's billing response to implement
+      return;
+
+      const result = await getCoordinatesByAddress(address);
+
+      console.log({ ...result });
+    }, 1000)
+  ).current;
+
+  // Sets the address
+  const setAddress = (address: string) => {
+    setAddressString(address);
+
+    // Call the debounce function
+    fetchAddress(address);
+  };
+
+  // Sets the new lat and lng
   const setLatLng = (lat: number, lng: number) => {
     setLat(lat);
     setLng(lng);
     setLatLngString(`${lat}, ${lng}`);
   };
 
+  // Map click handler
+  const onClickMap = (e: google.maps.MapMouseEvent) => {
+    if (!e.latLng) return;
+
+    setLatLng(e.latLng.lat(), e.latLng.lng());
+  };
+
+  // Form submit handler
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const data = new FormData(event.currentTarget);
+
+    event.preventDefault();
+
+    addMarker({
+      title: data.get("title") as string,
+      position: {
+        lat: parseFloat(data.get("lat") as string),
+        lng: parseFloat(data.get("lng") as string),
+      },
+      tags: data.get("tags")?.toString().split(",") as string[],
+      type: data.get("type") as any,
+    });
+
+    setIsOpen(false);
+  };
+
+  // Moves the map to the new Lat and Lng
+  useEffect(() => {
+    if (panToRef.current) panToRef.current({ lat, lng });
+  }, [lat, lng]);
+
+  // Lat Lng to string
   useEffect(() => {
     const split = latLngString.replace(" ", "").split(",");
 
@@ -39,8 +117,6 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
       }
     }
   }, [latLngString]);
-
-  openModalRef.current = () => setIsOpen(true);
 
   return (
     <ReactModal
@@ -74,27 +150,36 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
         }}
         className={styles.container}
       >
-        <form
-          className={styles.form}
-          onSubmit={(e) => {
-            const data = new FormData(e.currentTarget);
-            e.preventDefault();
-
-            addMarker({
-              title: data.get("title") as string,
-              position: {
-                lat: parseFloat(data.get("lat") as string),
-                lng: parseFloat(data.get("lng") as string),
-              },
-              tags: data.get("tags")?.toString().split(",") as string[],
-              type: data.get("type") as any,
-            });
-
-            setIsOpen(false);
+        <Map
+          onClick={onClickMap}
+          className={styles.map}
+          panToRef={panToRef}
+          options={{
+            disableDefaultUI: true,
           }}
         >
+          <MapMarker
+            mark={{
+              position: { lat, lng },
+              title: "",
+              type: "house",
+              tags: [],
+            }}
+          />
+        </Map>
+        <form className={styles.form} onSubmit={onSubmit}>
           <label>Title</label>
           <input name="title" type="text" />
+          <hr />
+          <label>Address</label>
+          <input
+            name="address"
+            type="text"
+            value={addressString}
+            onChange={(e) => {
+              setAddress(e.target.value);
+            }}
+          />
           <hr />
           <div className={styles.latLng}>
             <div>
