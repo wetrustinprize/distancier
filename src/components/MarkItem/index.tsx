@@ -9,10 +9,22 @@ import styles from "./styles.module.scss";
 import { toast } from "react-toastify";
 
 interface IMarkItem {
+  /**
+   * The marker to show information about.
+   */
   marker: Mark;
+
+  /**
+   * The marker index from the MarkersContext. (Used when need to delete the marker)
+   */
   index: number;
 }
 
+/**
+ * Shows information about a specific marker.
+ *
+ * @component
+ */
 const MarkItem: React.FC<IMarkItem> = ({ index, marker }: IMarkItem) => {
   const { removeMarker } = useContext(MarkersContext);
 

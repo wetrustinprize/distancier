@@ -5,6 +5,12 @@ interface IMapMarkerProps {
   map?: google.maps.Map;
 }
 
+/**
+ * Shows the line distance between the selected marker and the other markers.
+ * Automatically gets the markers from the MarkersContext.
+ *
+ * @component
+ */
 const MapMarkerDistances: React.FC<IMapMarkerProps> = ({
   map,
 }: IMapMarkerProps) => {
