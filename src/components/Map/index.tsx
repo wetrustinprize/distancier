@@ -4,27 +4,77 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./styles.module.scss";
 
 interface IMap {
+  /**
+   * Callback for when the map is clicked.
+   */
   onClick?: (e: google.maps.MapMouseEvent) => void;
+
+  /**
+   * Callback for when the map is on idle state.
+   */
   onIdle?: (e: google.maps.Map) => void;
+
+  /**
+   * Outer container classname
+   */
+  className?: string;
+
+  /**
+   * Callback reference to pan the map.
+   */
+  panToRef?: React.MutableRefObject<
+    (latLng: google.maps.LatLngLiteral) => void
+  >;
+
+  /**
+   * Google maps options
+   */
+  options?: google.maps.MapOptions;
+
+  /**
+   * Children
+   */
+  children?: React.ReactNode;
 }
 
-const Map: React.FC<IMap> = ({ children, onClick, onIdle }) => {
+/**
+ * Displays the Google map using the JavaScript API.
+ *
+ * @component
+ */
+const Map: React.FC<IMap> = ({
+  children,
+  onClick,
+  onIdle,
+  options,
+  className,
+  panToRef,
+}: IMap) => {
   const ref = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map>();
 
-  const { markers } = useContext(MarkersContext);
+  /**
+   * Pans the map to a specific coordinate.
+   *
+   * @param latLng Latitude and longitude
+   */
+  const panTo = (latLng: google.maps.LatLngLiteral) => {
+    map?.panTo(latLng);
+  };
+  if (panToRef) panToRef.current = panTo;
 
   // Create the map
   useEffect(() => {
     if (ref.current && !map) {
       const newMap = new google.maps.Map(ref.current, {
-        zoom: 2,
         center: { lat: 0, lng: 0 },
+        zoom: 2,
+        ...options,
       });
 
       setMap(newMap);
     }
-  }, [ref, map]);
+  }, [ref, map, options]);
 
   // Add event listeners
   useEffect(() => {
@@ -35,7 +85,7 @@ const Map: React.FC<IMap> = ({ children, onClick, onIdle }) => {
   }, [map, onClick, onIdle]);
 
   return (
-    <>
+    <div className={className}>
       <div className={styles.container} ref={ref} />
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
@@ -43,7 +93,7 @@ const Map: React.FC<IMap> = ({ children, onClick, onIdle }) => {
           return React.cloneElement(child, { map });
         }
       })}
-    </>
+    </div>
   );
 };
 
