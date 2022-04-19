@@ -10,12 +10,7 @@ interface IMap {
   onClick?: (e: google.maps.MapMouseEvent) => void;
 
   /**
-   * Callback for when the map is on idle state.
-   */
-  onIdle?: (e: google.maps.Map) => void;
-
-  /**
-   * Outer container classname
+   * Outer container class name
    */
   className?: string;
 
@@ -45,13 +40,14 @@ interface IMap {
 const Map: React.FC<IMap> = ({
   children,
   onClick,
-  onIdle,
   options,
   className,
   panToRef,
 }: IMap) => {
   const ref = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map>();
+
+  const onClickListener = useRef<google.maps.MapsEventListener>();
 
   /**
    * Pans the map to a specific coordinate.
@@ -79,10 +75,13 @@ const Map: React.FC<IMap> = ({
   // Add event listeners
   useEffect(() => {
     if (map) {
-      if (onClick) map.addListener("click", onClick);
-      if (onIdle) map.addListener("idle", onIdle);
+      if (onClick) {
+        if (onClickListener.current) onClickListener.current.remove();
+
+        onClickListener.current = map.addListener("click", onClick);
+      }
     }
-  }, [map, onClick, onIdle]);
+  }, [map, onClick]);
 
   return (
     <div className={className}>
