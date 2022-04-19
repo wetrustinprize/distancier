@@ -38,6 +38,8 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
   const [lat, setLat] = useState<number>(0);
   const [lng, setLng] = useState<number>(0);
 
+  const [type, setType] = useState<"house" | "place">("house");
+
   const [latLngString, setLatLngString] = useState<string>("0,0");
   const [addressString, setAddressString] = useState<string>("");
 
@@ -97,6 +99,23 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
 
     setIsOpen(false);
   };
+
+  // Reset values
+  useEffect(() => {
+    const checkClipboard = async () => {
+      const clipboard = await navigator.clipboard.readText();
+      const split = clipboard.split(",");
+
+      if (split.length === 2) {
+        setLatLngString(clipboard);
+      }
+    };
+
+    setLatLng(0, 0);
+    setLatLngString("");
+    setType("house");
+    checkClipboard();
+  }, [isOpen]);
 
   // Moves the map to the new Lat and Lng
   useEffect(() => {
@@ -162,15 +181,15 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
             mark={{
               position: { lat, lng },
               title: "",
-              type: "house",
               tags: [],
+              type,
             }}
           />
         </Map>
         <form className={styles.form} onSubmit={onSubmit}>
           <label>Title</label>
           <input name="title" type="text" />
-          <hr />
+          {/* <hr />
           <label>Address</label>
           <input
             name="address"
@@ -179,7 +198,7 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
             onChange={(e) => {
               setAddress(e.target.value);
             }}
-          />
+          /> */}
           <hr />
           <div className={styles.latLng}>
             <div>
@@ -215,7 +234,7 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
           />
           <hr />
           <label>Type</label>
-          <select name="type">
+          <select name="type" onChange={(e) => setType(e.target.value as any)}>
             <option value="house">House</option>
             <option value="place">Place</option>
           </select>
