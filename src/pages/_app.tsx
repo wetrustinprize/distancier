@@ -6,15 +6,22 @@ import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.css";
+import Head from "next/head";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <MarkersProvider>
-      <Wrapper apiKey={ENVIRONMENT.googleMapsApiKey}>
-        <Component {...pageProps} />
-        <ToastContainer position="top-left" />
-      </Wrapper>
-    </MarkersProvider>
+    <>
+      <Head>
+        <title>Distancier 📍</title>{" "}
+        <link rel="shortcut icon" href="/favicon.ico" />
+      </Head>
+      <MarkersProvider>
+        <Wrapper apiKey={ENVIRONMENT.googleMapsApiKey}>
+          <Component {...pageProps} />
+          <ToastContainer position="top-left" />
+        </Wrapper>
+      </MarkersProvider>
+    </>
   );
 }
 
