@@ -1,3 +1,4 @@
+import NoMarkersInfo from "@components/NoMarkersInfo";
 import { MarkersContext } from "@contexts/MarkersContext";
 import {
   calculateAverageDistancePerTag,
@@ -51,97 +52,92 @@ const Details: React.FC = () => {
     return `${Math.round(dataEntry.percentage)}%`;
   };
 
-  return (
+  return selectedMarker === null ? (
+    <div className={styles.noMarkers}>
+      <NoMarkersInfo />
+    </div>
+  ) : (
     <div className={styles.container}>
-      {selectedMarker === null ? (
-        <>
-          <h1 className={styles.notSelected}>Nothing selected</h1>
-          <h2 className={styles.notSelected}>Select a house marker</h2>
-        </>
-      ) : (
-        <>
-          <h1 className={styles.title}>{selectedMarker.title}</h1>
-          <div className={styles.chart}>
-            <PieChart
-              label={renderPieLabel}
-              labelStyle={{
-                color: "white",
-              }}
-              data={averages.map((a, index) => {
-                return {
-                  title: a.tag,
-                  value: a.average,
-                  color: seedColor(index.toString()).toHex(),
-                };
-              })}
-            />
-          </div>
-          <div className={styles.dataContainer}>
-            <h1>
-              <AiFillTags />
-              Average by tags
-            </h1>
-            <ul className={styles.data}>
-              {averages.map((a, index) => {
-                return (
-                  <li key={index}>
-                    <div>
-                      <div
-                        style={{
-                          backgroundColor: seedColor(index.toString()).toHex(),
-                        }}
-                        className={styles.color}
-                      />
-                      <span className={styles.tag}>{a.tag}</span>
+      <>
+        <h1 className={styles.title}>{selectedMarker.title}</h1>
+        <div className={styles.chart}>
+          <PieChart
+            label={renderPieLabel}
+            labelStyle={{
+              color: "white",
+            }}
+            data={averages.map((a, index) => {
+              return {
+                title: a.tag,
+                value: a.average,
+                color: seedColor(index.toString()).toHex(),
+              };
+            })}
+          />
+        </div>
+        <div className={styles.dataContainer}>
+          <h1>
+            <AiFillTags />
+            Average by tags
+          </h1>
+          <ul className={styles.data}>
+            {averages.map((a, index) => {
+              return (
+                <li key={index}>
+                  <div>
+                    <div
+                      style={{
+                        backgroundColor: seedColor(index.toString()).toHex(),
+                      }}
+                      className={styles.color}
+                    />
+                    <span className={styles.tag}>{a.tag}</span>
+                  </div>
+                  <div>
+                    <span className={styles.value}>{a.average.toFixed(2)}</span>
+                    <span className={styles.km}>km</span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div className={styles.dataContainer}>
+          <h1>
+            <RiPinDistanceFill />
+            Distances
+          </h1>
+          <ul className={styles.data}>
+            {distances.map((d, index) => {
+              return (
+                <li key={index}>
+                  <div>
+                    <div
+                      style={{
+                        backgroundColor: seedColor(index.toString()).toHex(),
+                      }}
+                      className={styles.color}
+                    >
+                      {d.marker.type === "house" ? (
+                        <BsFillHouseFill />
+                      ) : (
+                        <BsPinFill />
+                      )}
                     </div>
-                    <div>
-                      <span className={styles.value}>
-                        {a.average.toFixed(2)}
-                      </span>
-                      <span className={styles.km}>km</span>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-          <div className={styles.dataContainer}>
-            <h1>
-              <RiPinDistanceFill />
-              Distances
-            </h1>
-            <ul className={styles.data}>
-              {distances.map((d, index) => {
-                return (
-                  <li key={index}>
-                    <div>
-                      <div
-                        style={{
-                          backgroundColor: seedColor(index.toString()).toHex(),
-                        }}
-                        className={styles.color}
-                      >
-                        {d.marker.type === "house" ? (
-                          <BsFillHouseFill />
-                        ) : (
-                          <BsPinFill />
-                        )}
-                      </div>
-                      <span className={styles.tag}>{d.marker.title}</span>
-                    </div>
-                    <div>
-                      <span className={styles.value}>
-                        {d.distance.toFixed(2)}
-                      </span>
-                      <span className={styles.km}>km</span>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </>
-      )}
+                    <span className={styles.tag}>{d.marker.title}</span>
+                  </div>
+                  <div>
+                    <span className={styles.value}>
+                      {d.distance.toFixed(2)}
+                    </span>
+                    <span className={styles.km}>km</span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </>
     </div>
   );
 };

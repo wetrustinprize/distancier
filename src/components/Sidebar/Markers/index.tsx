@@ -7,6 +7,7 @@ import styles from "./styles.module.scss";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { RiAddFill } from "react-icons/ri";
+import NoMarkersInfo from "@components/NoMarkersInfo";
 
 const Markers: React.FC = () => {
   const { markers } = useContext(MarkersContext);
@@ -20,14 +21,20 @@ const Markers: React.FC = () => {
         className={styles.newMarker}
         onClick={() => openAddMarkModalRef.current()}
       >
-        <RiAddFill />
+        <RiAddFill size={24} />
         Add Marker
       </button>
-      <div className={styles.markers}>
-        {markers.map((marker, index) => (
-          <MarkItem key={index} index={index} marker={marker} />
-        ))}
-      </div>
+      {markers.length > 0 ? (
+        <div className={styles.markers}>
+          {markers.map((marker, index) => (
+            <MarkItem key={index} index={index} marker={marker} />
+          ))}
+        </div>
+      ) : (
+        <div className={styles.noMarkers}>
+          <NoMarkersInfo />
+        </div>
+      )}
     </div>
   );
 };

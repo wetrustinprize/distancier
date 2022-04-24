@@ -20,26 +20,32 @@ const Headers: ISidebarHeader[] = [
   },
 ];
 
-const Sidebar: React.FC = () => {
+interface ISideBar {
+  className?: string;
+}
+
+const Sidebar: React.FC<ISideBar> = ({ className }: ISideBar) => {
   const [selectedHeader, setSelectedHeader] = useState<string>(
     Headers[0].title
   );
 
   return (
-    <div className={styles.container}>
-      <div className={styles.headers}>
-        {Headers.map((h) => (
-          <button
-            key={h.title}
-            onClick={() => setSelectedHeader(h.title)}
-            className={selectedHeader === h.title ? styles.selected : ""}
-          >
-            {h.title}
-          </button>
-        ))}
-      </div>
-      <div className={styles.content}>
-        {Headers.find((h) => h.title === selectedHeader)?.component}
+    <div className={className}>
+      <div className={styles.container}>
+        <div className={styles.headers}>
+          {Headers.map((h) => (
+            <button
+              key={h.title}
+              onClick={() => setSelectedHeader(h.title)}
+              className={selectedHeader === h.title ? styles.selected : ""}
+            >
+              {h.title}
+            </button>
+          ))}
+        </div>
+        <div className={styles.content}>
+          {Headers.find((h) => h.title === selectedHeader)?.component}
+        </div>
       </div>
     </div>
   );
