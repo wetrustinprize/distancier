@@ -7,7 +7,7 @@ import type { NextPage } from "next";
 import { useContext } from "react";
 import { toast } from "react-toastify";
 
-import styled from "./styles.module.scss";
+import styles from "./styles.module.scss";
 
 const Home: NextPage = () => {
   const { markers, selectMarker } = useContext(MarkersContext);
@@ -23,8 +23,14 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className={styled.container}>
-      <Map onClick={copyLatLng}>
+    <div className={styles.container}>
+      <Map
+        className={styles.map}
+        onClick={copyLatLng}
+        options={{
+          disableDefaultUI: true,
+        }}
+      >
         <MapMarkerDistances />
         {markers.map((marker, index) => (
           <MapMarker
@@ -34,7 +40,7 @@ const Home: NextPage = () => {
           />
         ))}
       </Map>
-      <Sidebar />
+      <Sidebar className={styles.sidebar} />
     </div>
   );
 };
