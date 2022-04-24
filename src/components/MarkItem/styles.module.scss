@@ -36,14 +36,14 @@
             justify-content: center;
 
             border: 0;
-            color: var(--secondary-color);
+            color: var(--gray);
             background-color: transparent;
             cursor: pointer;
         }
 
         >span {
             font-size: 16px;
-            color: var(--secondary-color);
+            color: var(--gray);
         }
     }
 }
@@ -63,7 +63,7 @@
     overflow-x: auto;
 
     >span {
-        color: var(--secondary-color);
+        color: var(--gray);
 
         display: flex;
         align-items: center;
@@ -80,7 +80,7 @@
     column-gap: 4px;
 
     >span {
-        background-color: var(--secondary-color);
+        background-color: var(--gray);
         padding: 2px 8px;
         border-radius: 8px;
         color: white;

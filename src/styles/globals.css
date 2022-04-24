@@ -16,5 +16,8 @@ body {
 
   --primary-color: #2A9D8F;
   --primary-color-dark: #264653;
-  --secondary-color: #6c757d;
+  --gray: #6c757d;
+  --light-gray: #BCC1C5;
+  --red: #BF616A;
+  --yellow: #EBCB8B;
 }
