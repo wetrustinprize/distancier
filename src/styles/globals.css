@@ -11,6 +11,19 @@ body {
   margin: 0;
 }
 
+*::-webkit-scrollbar {
+  height: 5px;
+  border-radius: 5px;
+
+  background-color: var(--gray);
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+
+  background-color: var(--light-gray);
+}
+
 :root {
   --toastify-color-success: #2A9D8F;
 
