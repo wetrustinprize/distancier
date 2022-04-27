@@ -1,16 +1,10 @@
 import Map from "@components/Map";
 import MapMarker from "@components/MapMarker";
 import { MarkersContext } from "@contexts/MarkersContext";
-import { getCoordinatesByAddress } from "@services/Geocode";
 import { motion } from "framer-motion";
-import { debounce } from "lodash";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { BsFillHouseFill, BsPinFill } from "react-icons/bs";
+import { IoIosAdd, IoIosClose } from "react-icons/io";
 import ReactModal from "react-modal";
 
 import styles from "./styles.module.scss";
@@ -41,31 +35,13 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
   const [type, setType] = useState<"house" | "place">("house");
 
   const [latLngString, setLatLngString] = useState<string>("0,0");
-  const [addressString, setAddressString] = useState<string>("");
+
+  const [tags, setTags] = useState<string[]>([]);
 
   const panToRef = useRef<(latLng: google.maps.LatLngLiteral) => void>(
     () => {}
   );
-
-  // Fetches the address with a debounce
-  const fetchAddress = useRef(
-    debounce(async (address: string) => {
-      // TODO: Wait for Google's billing response to implement
-      return;
-
-      const result = await getCoordinatesByAddress(address);
-
-      console.log({ ...result });
-    }, 1000)
-  ).current;
-
-  // Sets the address
-  const setAddress = (address: string) => {
-    setAddressString(address);
-
-    // Call the debounce function
-    fetchAddress(address);
-  };
+  const tagInputRef = useRef<HTMLInputElement>(null);
 
   // Sets the new lat and lng
   const setLatLng = (lat: number, lng: number) => {
@@ -81,6 +57,19 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
     setLatLng(e.latLng.lat(), e.latLng.lng());
   };
 
+  // Create tag
+  const addTag = (tag: string) => {
+    if (!tag) return;
+    if (tags.includes(tag)) return;
+
+    setTags([...tags, tag]);
+  };
+
+  // Remove tag
+  const removeTag = (tag: string) => {
+    setTags(tags.filter((t) => t !== tag));
+  };
+
   // Form submit handler
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const data = new FormData(event.currentTarget);
@@ -90,11 +79,11 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
     addMarker({
       title: data.get("title") as string,
       position: {
-        lat: parseFloat(data.get("lat") as string),
-        lng: parseFloat(data.get("lng") as string),
+        lat,
+        lng,
       },
-      tags: data.get("tags")?.toString().split(",") as string[],
-      type: data.get("type") as any,
+      tags,
+      type,
     });
 
     setIsOpen(false);
@@ -106,9 +95,7 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
       const clipboard = await navigator.clipboard.readText();
       const split = clipboard.split(",");
 
-      if (split.length === 2) {
-        setLatLngString(clipboard);
-      }
+      if (split.length === 2) setLatLngString(clipboard);
     };
 
     setLatLng(0, 0);
@@ -187,67 +174,75 @@ const AddMarkModal: React.FC<IAddMarkModal> = ({
           />
         </Map>
         <form className={styles.form} onSubmit={onSubmit}>
-          <label>Title</label>
-          <input name="title" type="text" />
-          {/* <hr />
-          <label>Address</label>
-          <input
-            name="address"
-            type="text"
-            value={addressString}
-            onChange={(e) => {
-              setAddress(e.target.value);
-            }}
-          /> */}
-          <hr />
-          <div className={styles.latLng}>
-            <div>
-              <label>Lat</label>
-              <input
-                onChange={(e) =>
-                  setLatLng(parseFloat(e.currentTarget.value), lng)
-                }
-                value={lat}
-                name="lat"
-                type="number"
-              />
-            </div>
-            <div>
-              <label>Lng</label>
-              <input
-                onChange={(e) =>
-                  setLatLng(lat, parseFloat(e.currentTarget.value))
-                }
-                value={lng}
-                name="lng"
-                type="number"
-              />
-            </div>
-          </div>
-          <label>
-            Lat + Lng <small>(divided by comma)</small>
-          </label>
+          <label>Name</label>
+          <input placeholder="Put name here..." name="title" type="text" />
+          <label>Latitude, Longitude</label>
           <input
             value={latLngString}
             onChange={(e) => setLatLngString(e.target.value)}
             type="text"
+            placeholder="0.00, 0.00"
           />
-          <hr />
+          <label>Tags</label>
+          <section className={styles.tagsInput}>
+            <input
+              placeholder="Type tag here..."
+              onKeyDown={(e) => {
+                if (e.key !== "Enter") return;
+                e.preventDefault();
+
+                addTag((e.target as HTMLInputElement).value);
+                (e.target as HTMLInputElement).value = "";
+              }}
+              name="tags"
+              type="text"
+              ref={tagInputRef}
+            />
+            <button
+              onClick={() => {
+                if (!tagInputRef.current) return;
+
+                addTag(tagInputRef.current.value);
+                tagInputRef.current.value = "";
+              }}
+              type="button"
+            >
+              <IoIosAdd />
+            </button>
+          </section>
+          <section className={styles.tags}>
+            {tags.map((tag) => (
+              <span key={tag}>
+                {tag}
+                <button onClick={() => removeTag(tag)} type="button">
+                  <IoIosClose />
+                </button>
+              </span>
+            ))}
+          </section>
           <label>Type</label>
-          <select name="type" onChange={(e) => setType(e.target.value as any)}>
-            <option value="house">House</option>
-            <option value="place">Place</option>
-          </select>
-          <label>
-            Tags <small>(divided by comma)</small>
-          </label>
-          <input name="tags" type="text" />
-          <div className={styles.buttons}>
-            <input type="submit" value="Add" />
+          <section className={styles.type}>
+            <button
+              className={type === "house" ? styles.selected : ""}
+              type="button"
+              onClick={() => setType("house")}
+            >
+              <BsFillHouseFill />
+            </button>
+            <button
+              className={type === "place" ? styles.selected : ""}
+              type="button"
+              onClick={() => setType("place")}
+            >
+              <BsPinFill />
+            </button>
+          </section>
+          <section className={styles.buttons}>
+            <input type="submit" value="Create" />
             <button type="button" onClick={() => setIsOpen(false)}>
               Cancel
             </button>
-          </div>
+          </section>
         </form>
       </motion.div>
     </ReactModal>

@@ -1,10 +1,13 @@
 .container {
+    width: 639px;
+    height: 419px;
+
     background-color: var(--primary-color-dark);
     padding: 20px;
     border-radius: 16px;
 
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 50%);
     column-gap: 12px;
 }
 
@@ -16,28 +19,142 @@
 .form {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 
     row-gap: 6px;
 
-    >div.latLng {
-        >div {
-            display: flex;
-            flex-direction: column;
-            column-gap: 6px;
-        }
-
+    >section.tagsInput {
         display: flex;
         flex-direction: row;
-        column-gap: 6px;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: 10px;
+
+        > input {
+            flex: 1 1 auto;
+        }
+
+        > button {
+            flex: 0 0 auto;
+
+            $size: 32px;
+
+            height: $size;
+            width: $size;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            border: 0;
+            background-color: white;
+            border-radius: 50%;
+
+            cursor: pointer;
+
+            > svg {
+                font-size: 20px;
+            }
+        }
     }
 
-    >div.buttons {
+    >section.tags {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        column-gap: 4px;
+        min-height: 40px;
+        overflow-x: scroll;
+
+        padding: 5px 0;
+
+        > span {
+            &, * {
+               user-select: none; 
+            }
+
+            height: max-content;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: row;
+            column-gap: 5px;
+
+            border-radius: 12px;
+
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0 5px 0 10px;
+
+            > button {
+                margin: 0;
+                background: 0;
+                border: 0;
+
+                color: white;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                cursor: pointer;
+
+                > svg {
+                    font-size: 24px;
+                }
+            }
+        }
+    }
+
+    >section.type {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        column-gap: 20px;
+
+        > button {
+            border: 0;
+            padding: 15px;
+            border-radius: 50%;
+            background-color: white;
+
+            color: var(--primary-color-dark);
+
+            transition: all 0.1s;
+
+            > svg {
+                font-size: 64px;
+            }
+
+            &.selected {
+                color: white;
+                background-color: var(--primary-color);
+            }
+        }
+
+    }
+
+    >section.buttons {
         margin-top: 16px;
 
         display: flex;
         flex-direction: row;
         justify-content: center;
         column-gap: 12px;
+
+        input[type="submit"],
+        button {
+            height: 100%;
+            cursor: pointer;
+            border: 0;
+            color: white;
+            background-color: var(--primary-color);
+            padding: 5px 20px;
+            border-radius: 5px;
+            font-weight: 700;
+            font-size: 16px;
+        }
     }
 
     hr {
@@ -46,21 +163,17 @@
 
     input,
     select {
+        height: 21px;
         background-color: white;
-        padding: 5px;
+        padding: 6.5px 10px;
         border: 0;
-        border-radius: 5px;
-    }
+        border-radius: 12px;
 
-    input[type="submit"],
-    button {
-        cursor: pointer;
-        border: 0;
-        color: white;
-        background-color: var(--primary-color);
-        padding: 5px 20px;
-        border-radius: 5px;
-        font-weight: 700;
+        font-size: 16px;
+
+        &::placeholder {
+            color: var(--light-gray);
+        }
     }
 
     label {
